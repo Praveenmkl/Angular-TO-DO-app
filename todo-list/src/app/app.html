@@ -1,0 +1,158 @@
+
+    
+<div class="page">
+  <main class="todo-container">
+
+    <header class="header">
+      <h1>Get things done.</h1>
+      <p class="subtitle">
+        A little progress every day adds up to big results.
+      </p>
+    </header>
+
+    <section class="stats">
+      <div class="stat-card">
+        <span class="stat-label">Total tasks</span>
+        <strong>{{ totalTasks }}</strong>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-label">Remaining</span>
+        <strong>{{ activeTasks }}</strong>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-label">Completed</span>
+        <strong>{{ completedTasks }}</strong>
+      </div>
+    </section>
+
+    <section class="task-panel">
+      <form class="add-form" (ngSubmit)="addTask()">
+        <input
+          type="text"
+          name="newTask"
+          [(ngModel)]="newTask"
+          placeholder="What needs to be done?"
+          autocomplete="off"
+          maxlength="150"
+          aria-label="New task"
+        />
+
+        <button type="submit" class="add-button">
+          <span>+</span> Add task
+        </button>
+      </form>
+
+      <div class="task-toolbar">
+        <div class="filters" aria-label="Filter tasks">
+          <button
+            type="button"
+            [class.selected]="currentFilter === 'all'"
+            [attr.aria-pressed]="currentFilter === 'all'"
+            (click)="setFilter('all')"
+          >
+            All
+          </button>
+
+          <button
+            type="button"
+            [class.selected]="currentFilter === 'active'"
+            [attr.aria-pressed]="currentFilter === 'active'"
+            (click)="setFilter('active')"
+          >
+            Active
+          </button>
+
+          <button
+            type="button"
+            [class.selected]="currentFilter === 'completed'"
+            [attr.aria-pressed]="currentFilter === 'completed'"
+            (click)="setFilter('completed')"
+          >
+            Completed
+          </button>
+        </div>
+
+        @if (completedTasks > 0) {
+          <button
+            type="button"
+            class="clear-button"
+            (click)="clearCompleted()"
+          >
+            Clear completed
+          </button>
+        }
+      </div>
+
+      <div class="task-list">
+        @for (task of filteredTasks; track task.id) {
+          <article
+            class="task-item"
+            [class.completed]="task.completed"
+          >
+            <label class="task-content">
+              <input
+                type="checkbox"
+                [checked]="task.completed"
+                (change)="toggleTask(task.id)"
+                [attr.aria-label]="'Complete ' + task.title"
+              />
+
+              <span class="checkmark"></span>
+
+              <span class="task-title">
+                {{ task.title }}
+              </span>
+            </label>
+
+            <button
+              type="button"
+              class="delete-button"
+              (click)="deleteTask(task.id)"
+              [attr.aria-label]="'Delete ' + task.title"
+              title="Delete task"
+            >
+              ✕
+            </button>
+          </article>
+        } @empty {
+          <div class="empty-state">
+            <div class="empty-icon">
+              @if (currentFilter === 'completed') {
+                ✓
+              } @else {
+                ☑
+              }
+            </div>
+
+            @if (currentFilter === 'active') {
+              <h3>You're all caught up!</h3>
+              <p>There are no pending tasks.</p>
+            } @else if (currentFilter === 'completed') {
+              <h3>No completed tasks yet</h3>
+              <p>Finish a task and it will appear here.</p>
+            } @else {
+              <h3>Your list is looking empty</h3>
+              <p>Add your first task and get started.</p>
+            }
+          </div>
+        }
+      </div>
+
+      <footer class="panel-footer">
+        <span>
+          {{ activeTasks }}
+          {{ activeTasks === 1 ? 'task' : 'tasks' }} remaining
+        </span>
+
+        <span>{{ completedTasks }} completed</span>
+      </footer>
+    </section>
+
+    <p class="page-footer">
+      Built with Angular · One task at a time.
+    </p>
+
+  </main>
+</div>
